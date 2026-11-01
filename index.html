@@ -1,0 +1,395 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Organ Explorers</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;800&display=swap">
+<style>
+/* Concept: a bright science playground. Cartoon organs with faces are the characters; chunky tappable buttons; one big task per screen. */
+:root{
+  --bg:#E9F4FF; --card:#FFFFFF; --ink:#22304A; --muted:#566684; --line:#C9D9EE;
+  --purple:#6B3FA0; --green:#1E7A45; --orange:#B8501A; --blue:#2468B8; --yellow:#FFD84D;
+  --okbg:#DDF5E6; --okfg:#145A32; --badbg:#FFE3E6; --badfg:#8A1F2D;
+  --spot:rgba(255,255,255,.7); --body:#FFFFFF; --bodyline:#6B3FA0; --shadow:rgba(34,48,74,.22);
+  --display:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --text:'Nunito','Trebuchet MS',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#171A30; --card:#232848; --ink:#F1F3FF; --muted:#A9B3D6; --line:#3A4170;
+    --okbg:#173B2A; --okfg:#BDF2D2; --badbg:#46202A; --badfg:#FFC9D0;
+    --spot:rgba(255,255,255,.14); --body:#2F3560; --bodyline:#B79CFF; --shadow:rgba(0,0,0,.45); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#171A30; --card:#232848; --ink:#F1F3FF; --muted:#A9B3D6; --line:#3A4170;
+  --okbg:#173B2A; --okfg:#BDF2D2; --badbg:#46202A; --badfg:#FFC9D0;
+  --spot:rgba(255,255,255,.14); --body:#2F3560; --bodyline:#B79CFF; --shadow:rgba(0,0,0,.45); color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--text);font-weight:600;font-size:18px;line-height:1.4;
+  padding-block:12px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));min-height:100%}
+#app{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.1;text-wrap:balance}
+button{font-family:inherit;color:inherit}
+:focus-visible{outline:4px solid var(--yellow);outline-offset:3px}
+
+#top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px}
+.pill{background:var(--card);border:2px solid var(--line);border-radius:999px;padding:6px 14px;font:800 1rem var(--display);display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--ink)}
+.pill.static{cursor:default}
+.pill svg{width:22px;height:22px}
+#home-btn[hidden]{display:none}
+.spacer{flex:1}
+
+.btn{border:0;color:#fff;font:800 1.3rem var(--display);padding:14px 20px;border-radius:20px;min-height:64px;box-shadow:0 6px 0 var(--shadow);cursor:pointer;display:flex;align-items:center;gap:14px;text-align:left;width:100%;transition:transform .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--shadow)}
+.btn small{display:block;font:600 .9rem var(--text);opacity:.95}
+.btn .ico{flex:none;width:54px;height:54px;background:rgba(255,255,255,.92);border-radius:16px;display:grid;place-items:center}
+.btn .ico svg{width:42px;height:42px}
+.c-purple{background:var(--purple)} .c-green{background:var(--green)} .c-orange{background:var(--orange)} .c-blue{background:var(--blue)}
+.btn.center{justify-content:center;text-align:center;width:auto;min-width:180px}
+
+.hero{display:flex;align-items:center;gap:16px;background:var(--card);border:2px solid var(--line);border-radius:28px;padding:16px}
+.hero svg{width:110px;height:110px;flex:none;animation:beat 1.4s ease-in-out infinite}
+.hero h1{font-size:2.3rem;color:var(--purple)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hero h1{color:#C9B4FF}}
+:root[data-theme="dark"] .hero h1{color:#C9B4FF}
+.hero p{margin:6px 0 0;color:var(--muted);font-size:1rem}
+@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.menu{display:grid;gap:14px}
+.note{color:var(--muted);font-size:.9rem;text-align:center;margin:0}
+
+.card{background:var(--card);border:2px solid var(--line);border-radius:28px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.card .big{width:140px;height:140px}
+.card h2{font-size:1.8rem}
+.say{border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:8px 16px;font:800 1rem var(--display);cursor:pointer;display:inline-flex;gap:8px;align-items:center;color:var(--ink)}
+.say svg{width:22px;height:22px}
+.dots{display:flex;gap:8px;justify-content:center}
+.dots span{width:16px;height:16px;border-radius:50%;background:var(--line)}
+.dots .done{background:var(--green)} .dots .cur{background:var(--yellow);box-shadow:0 0 0 3px var(--purple)}
+.opts{display:grid;gap:12px}
+.opt{border:3px solid var(--line);background:var(--card);border-radius:22px;min-height:72px;padding:12px 16px;font:800 1.3rem var(--display);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;text-align:center;box-shadow:0 5px 0 var(--shadow);color:var(--ink)}
+.opt:active{transform:translateY(3px)}
+.opt svg{width:52px;height:52px;flex:none}
+.opt small{display:block;font:600 .85rem var(--text);color:var(--muted)}
+.opt.right{background:var(--okbg);border-color:var(--green);color:var(--okfg)}
+.opt.wrong{background:var(--badbg);border-color:#D0475A;color:var(--badfg);animation:shake .35s}
+.opt:disabled{cursor:default}
+.two{grid-template-columns:1fr 1fr}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.fb{border-radius:22px;padding:14px 18px;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center;font-weight:800}
+.fb.ok{background:var(--okbg);color:var(--okfg)} .fb.bad{background:var(--badbg);color:var(--badfg)}
+.fb p{margin:0}
+
+.stars-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.stars-row svg{width:44px;height:44px}
+.row-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+
+.meet{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.meet button{border:3px solid var(--line);background:var(--card);border-radius:20px;padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font:800 .95rem var(--display);color:var(--ink)}
+.meet button svg{width:56px;height:56px}
+.meet button[aria-pressed="true"]{border-color:var(--purple);background:var(--bg)}
+@media (max-width:480px){.meet{grid-template-columns:repeat(3,1fr)} .two{grid-template-columns:1fr} .hero{flex-direction:column;text-align:center}}
+.tag{display:inline-block;border-radius:999px;padding:2px 12px;font:800 .95rem var(--display);color:#fff}
+.tag.ext{background:var(--orange)} .tag.int{background:var(--purple)}
+
+.bodywrap{background:var(--card);border:2px solid var(--line);border-radius:28px;padding:10px;display:flex;justify-content:center}
+.bodywrap svg{width:min(100%,300px);height:auto;display:block;touch-action:manipulation}
+.spot{cursor:pointer}
+.spot .hit{fill:var(--spot);stroke:var(--bodyline);stroke-width:2.5;stroke-dasharray:6 5}
+.spot.filled{cursor:default}
+.spot.filled .hit{stroke-dasharray:none;fill:none;stroke:none}
+.spot.pulse .hit{animation:pulse .8s ease-in-out infinite;stroke:var(--green);stroke-width:4}
+@keyframes pulse{50%{stroke-width:9}}
+.spot.nope .hit{animation:shake .35s}
+.confetti{position:fixed;top:-20px;width:12px;height:16px;z-index:50;pointer-events:none;animation:fall 2.4s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<main id="app">
+  <div id="top">
+    <button class="pill" id="home-btn" hidden aria-label="Back to home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Home</button>
+    <span class="spacer"></span>
+    <span class="pill static" aria-label="Stars won"><svg viewBox="0 0 24 24"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 7L12 17.5 5.7 21l1.5-7L2 9.3l7-.8z" fill="#FFD84D" stroke="#E8833A" stroke-width="1.5" stroke-linejoin="round"/></svg><span id="starcount">0</span></span>
+    <button class="pill" id="sound-btn" aria-pressed="true">Sound on</button>
+  </div>
+  <section id="stage" aria-live="polite"></section>
+</main>
+
+<script>
+(function(){
+"use strict";
+var stage=document.getElementById('stage'), homeBtn=document.getElementById('home-btn'),
+    starEl=document.getElementById('starcount'), soundBtn=document.getElementById('sound-btn');
+
+/* ---------- data ---------- */
+var ORGANS={
+  ears:{name:'Ears',ext:true,fact:'Ears are external organs. Their job is hearing.'},
+  skin:{name:'Skin',ext:true,fact:'The skin is an external organ. It protects your body and helps you feel touch.'},
+  heart:{name:'Heart',ext:false,fact:'The heart is an internal organ. It moves blood around your body.'},
+  lungs:{name:'Lungs',ext:false,fact:'Lungs are internal organs. They are inside your chest.'},
+  stomach:{name:'Stomach',ext:false,fact:'The stomach is an internal organ. It is inside your tummy.'},
+  intestines:{name:'Intestines',ext:false,fact:'Intestines are internal organs. They are inside your tummy.'},
+  brain:{name:'Brain',ext:false,fact:'The brain is an internal organ. It is inside your head.'},
+  kidneys:{name:'Kidneys',ext:false,fact:'Kidneys are internal organs. They are inside your body.'}
+};
+var JOBS={
+  heart:{text:'Moves blood around your body',mark:'blood'},
+  ears:{text:'Hearing',mark:'hear'},
+  skin:{text:'Protects your body and feels touch',mark:'touch'}
+};
+
+/* ---------- icons (cartoon organs with faces) ---------- */
+var EYES=function(x1,x2,y){return '<circle cx="'+x1+'" cy="'+y+'" r="4.2" fill="#22304A"/><circle cx="'+x2+'" cy="'+y+'" r="4.2" fill="#22304A"/><circle cx="'+(x1+1.4)+'" cy="'+(y-1.4)+'" r="1.4" fill="#fff"/><circle cx="'+(x2+1.4)+'" cy="'+(y-1.4)+'" r="1.4" fill="#fff"/>';};
+var SMILE=function(x,y,w){return '<path d="M'+(x-w)+' '+y+' Q'+x+' '+(y+w*1.1)+' '+(x+w)+' '+y+'" stroke="#22304A" stroke-width="3" fill="none" stroke-linecap="round"/>';};
+var CHEEK=function(x,y){return '<ellipse cx="'+x+'" cy="'+y+'" rx="5" ry="3" fill="#FF8FA3" opacity=".7"/>';};
+var INNER={
+  heart:'<path d="M50 90C8 60 6 28 30 20c12-4 20 6 20 14 0-8 8-18 20-14 24 8 22 40-20 70z" fill="#E0556B" stroke="#B93A50" stroke-width="3" stroke-linejoin="round"/>'+EYES(38,62,48)+SMILE(50,60,8)+CHEEK(30,58)+CHEEK(70,58),
+  lungs:'<rect x="46" y="8" width="8" height="34" rx="4" fill="#E78AA2"/><path d="M44 28C28 24 10 44 10 66c0 16 14 20 26 14 8-4 8-16 8-26z" fill="#F4A0B5" stroke="#D9728E" stroke-width="3" stroke-linejoin="round"/><path d="M56 28c16-4 34 16 34 38 0 16-14 20-26 14-8-4-8-16-8-26z" fill="#F4A0B5" stroke="#D9728E" stroke-width="3" stroke-linejoin="round"/>'+EYES(26,74,56)+SMILE(26,66,6)+SMILE(74,66,6),
+  brain:'<g fill="#F7B2C8" stroke="#E08AAB" stroke-width="3"><circle cx="34" cy="42" r="20"/><circle cx="66" cy="42" r="20"/><circle cx="28" cy="64" r="16"/><circle cx="72" cy="64" r="16"/><circle cx="50" cy="68" r="18"/></g><path d="M50 24v26" stroke="#E08AAB" stroke-width="3" stroke-linecap="round"/>'+EYES(38,62,56)+SMILE(50,67,7)+CHEEK(30,66)+CHEEK(70,66),
+  stomach:'<path d="M36 10c22-6 38 6 34 30 18 8 22 40-4 50-22 8-44-6-40-26 2-10 10-12 10-22z" fill="#F6A65B" stroke="#D07A2B" stroke-width="3" stroke-linejoin="round"/><rect x="28" y="4" width="12" height="16" rx="5" fill="#E08A3C"/>'+EYES(48,66,62)+SMILE(57,74,6)+CHEEK(42,72)+CHEEK(72,72),
+  intestines:'<path d="M20 24H78Q88 24 88 33Q88 42 78 42H26Q14 42 14 53Q14 64 26 64H74Q86 64 86 73Q86 83 74 83H26" fill="none" stroke="#D98A3F" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 24H78Q88 24 88 33Q88 42 78 42H26Q14 42 14 53Q14 64 26 64H74Q86 64 86 73Q86 83 74 83H26" fill="none" stroke="#F5BE80" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>'+EYES(40,58,33),
+  kidneys:'<g fill="#B77BC0" stroke="#8F4F9A" stroke-width="3"><path d="M30 14c-14 4-20 26-16 46 4 22 20 28 26 18 4-8-6-14-6-22 0-10 10-12 8-24-1-12-6-20-12-18z" transform="translate(2 4)"/><path d="M70 14c14 4 20 26 16 46-4 22-20 28-26 18-4-8 6-14 6-22 0-10-10-12-8-24 1-12 6-20 12-18z" transform="translate(-2 4)"/></g>'+EYES(24,76,46)+SMILE(24,58,5)+SMILE(76,58,5),
+  ears:'<circle cx="50" cy="50" r="46" fill="#FFE7C2"/><text x="50" y="70" font-size="58" text-anchor="middle">&#128066;</text>',
+  skin:'<circle cx="50" cy="50" r="46" fill="#FFE7C2"/><text x="50" y="70" font-size="58" text-anchor="middle">&#128400;&#65039;</text>'
+};
+function icon(k){return '<svg viewBox="0 0 100 100" role="img" aria-label="'+ORGANS[k].name+'">'+INNER[k]+'</svg>';}
+var STAR_SVG='<svg viewBox="0 0 24 24"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 7L12 17.5 5.7 21l1.5-7L2 9.3l7-.8z" fill="FILL" stroke="#E8833A" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+var SPEAKER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12"/></svg>';
+
+/* ---------- helpers ---------- */
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+var soundOn=true, total=0, audio=null;
+try{total=parseInt(localStorage.getItem('oe_stars'),10)||0;}catch(e){}
+function paintStars(){starEl.textContent=total;}
+function addStars(n){total+=n;paintStars();try{localStorage.setItem('oe_stars',String(total));}catch(e){}}
+function tone(freqs){
+  if(!soundOn)return;
+  try{
+    audio=audio||new (window.AudioContext||window.webkitAudioContext)();
+    var t=audio.currentTime;
+    freqs.forEach(function(f,i){
+      var o=audio.createOscillator(),g=audio.createGain();
+      o.type='sine';o.frequency.value=f;o.connect(g);g.connect(audio.destination);
+      g.gain.setValueAtTime(0.0001,t+i*0.14);g.gain.exponentialRampToValueAtTime(0.18,t+i*0.14+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+i*0.14+0.22);
+      o.start(t+i*0.14);o.stop(t+i*0.14+0.25);
+    });
+  }catch(e){}
+}
+function good(){tone([660,880]);} function oops(){tone([300]);} function cheer(){tone([523,659,784,1047]);}
+function speak(text){
+  try{
+    if(!('speechSynthesis' in window))return;
+    window.speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(text);u.rate=.9;u.lang='en-GB';window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function confetti(){
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var cols=['#FFD84D','#E0556B','#2468B8','#1E7A45','#B8501A','#B77BC0'];
+  for(var i=0;i<40;i++){
+    var d=document.createElement('div');d.className='confetti';
+    d.style.left=Math.random()*100+'vw';d.style.background=cols[i%cols.length];
+    d.style.animationDelay=(Math.random()*0.8)+'s';d.style.animationDuration=(1.8+Math.random()*1.4)+'s';
+    document.body.appendChild(d);
+    (function(n){setTimeout(function(){n.remove();},3600);})(d);
+  }
+}
+function html(s){stage.innerHTML=s;window.scrollTo(0,0);}
+function listen(btn,text){btn.addEventListener('click',function(){speak(text);});}
+function listenBtn(id){return '<button class="say" id="'+id+'" type="button">'+SPEAKER+'Listen</button>';}
+
+/* ---------- home ---------- */
+function home(){
+  homeBtn.hidden=true;
+  html('<div class="hero">'+icon('heart')+'<div><h1>Organ Explorers</h1><p>Meet the organs in your body and play to learn about them!</p></div></div>'+
+   '<div class="menu">'+
+   '<button class="btn c-blue" id="g0"><span class="ico">'+icon('brain')+'</span><span>Meet the Organs<small>Tap each one to learn</small></span></button>'+
+   '<button class="btn c-purple" id="g1"><span class="ico">'+icon('lungs')+'</span><span>Inside or Outside?<small>Sort the organs</small></span></button>'+
+   '<button class="btn c-green" id="g2"><span class="ico">'+icon('heart')+'</span><span>Organ Jobs<small>What does each organ do?</small></span></button>'+
+   '<button class="btn c-orange" id="g3"><span class="ico">'+icon('stomach')+'</span><span>Build the Body<small>Put the organs in place</small></span></button>'+
+   '</div><p class="note">Human body, Unit 4: pages 54 and 55</p>');
+  document.getElementById('g0').onclick=meet;
+  document.getElementById('g1').onclick=game1;
+  document.getElementById('g2').onclick=game2;
+  document.getElementById('g3').onclick=game3;
+}
+
+/* ---------- meet the organs ---------- */
+function meet(){
+  homeBtn.hidden=false;
+  var keys=Object.keys(ORGANS);
+  html('<div class="card" id="detail"></div><div class="meet" id="grid"></div>');
+  var grid=document.getElementById('grid');
+  function show(k){
+    var o=ORGANS[k];
+    document.getElementById('detail').innerHTML='<div class="big">'+icon(k)+'</div><h2>'+o.name+'</h2>'+
+      '<span class="tag '+(o.ext?'ext':'int')+'">'+(o.ext?'External: on the outside':'Internal: on the inside')+'</span>'+
+      '<p style="margin:0">'+o.fact+'</p>'+listenBtn('say');
+    listen(document.getElementById('say'),o.name+'. '+o.fact);
+    Array.prototype.forEach.call(grid.children,function(b){b.setAttribute('aria-pressed',b.dataset.k===k?'true':'false');});
+  }
+  keys.forEach(function(k){
+    var b=document.createElement('button');b.dataset.k=k;b.type='button';b.innerHTML=icon(k)+'<span>'+ORGANS[k].name+'</span>';
+    b.onclick=function(){show(k);speak(ORGANS[k].name);};grid.appendChild(b);
+  });
+  show('heart');
+}
+
+/* ---------- quiz engine ---------- */
+function quiz(rounds,replay){
+  homeBtn.hidden=false;
+  var i=0,earned=0,missed=false;
+  function draw(){
+    var r=rounds[i];missed=false;
+    var dots='';for(var d=0;d<rounds.length;d++)dots+='<span class="'+(d<i?'done':d===i?'cur':'')+'"></span>';
+    html('<div class="dots" aria-label="Question '+(i+1)+' of '+rounds.length+'">'+dots+'</div>'+
+      '<div class="card">'+(r.visual||'')+'<h2>'+r.q+'</h2>'+listenBtn('say')+'</div>'+
+      '<div class="opts '+(r.cols===2?'two':'')+'" id="opts"></div><div id="fb"></div>');
+    listen(document.getElementById('say'),r.speak||r.q);
+    var opts=document.getElementById('opts'),fb=document.getElementById('fb');
+    shuffle(r.options).forEach(function(o){
+      var b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=o.html;
+      b.onclick=function(){
+        if(o.ok){
+          Array.prototype.forEach.call(opts.children,function(x){x.disabled=true;});
+          b.classList.add('right');good();
+          var gain=missed?0:1;if(gain){earned++;addStars(1);}
+          fb.innerHTML='<div class="fb ok"><p>'+(gain?'Great job! ':'You got it! ')+r.explain+'</p><button class="btn c-green center" id="next" type="button">'+(i<rounds.length-1?'Next':'Finish')+'</button></div>';
+          document.getElementById('next').onclick=function(){i++;if(i<rounds.length)draw();else done();};
+          document.getElementById('next').focus({preventScroll:false});
+        }else{
+          missed=true;b.classList.add('wrong');b.disabled=true;oops();
+          fb.innerHTML='<div class="fb bad"><p>Not this one. Try again!</p></div>';
+        }
+      };
+      opts.appendChild(b);
+    });
+  }
+  function done(){
+    var row='';for(var s=0;s<rounds.length;s++)row+=STAR_SVG.replace('FILL',s<earned?'#FFD84D':'rgba(150,160,190,.35)');
+    html('<div class="card"><div class="big">'+icon('heart')+'</div><h2>'+(earned>=rounds.length-1?'Amazing work!':'Good try, explorer!')+'</h2>'+
+      '<div class="stars-row">'+row+'</div><p style="margin:0">You won '+earned+' of '+rounds.length+' stars.</p>'+
+      '<div class="row-btns"><button class="btn c-purple center" id="again" type="button">Play again</button><button class="btn c-blue center" id="home2" type="button">Home</button></div></div>');
+    document.getElementById('again').onclick=replay;document.getElementById('home2').onclick=home;
+    cheer();if(earned>0)confetti();
+  }
+  draw();
+}
+
+/* ---------- game 1: inside or outside ---------- */
+var PLURAL={ears:1,lungs:1,intestines:1,kidneys:1};
+function game1(){
+  var rounds=shuffle(Object.keys(ORGANS)).map(function(k){
+    var o=ORGANS[k];
+    return {
+      q:(PLURAL[k]?'Are the ':'Is the ')+o.name.toLowerCase()+' on the outside or the inside?',
+      speak:(PLURAL[k]?'Are the ':'Is the ')+o.name+' on the outside or the inside?',
+      visual:'<div class="big">'+icon(k)+'</div>',cols:2,
+      explain:o.fact,
+      options:[
+        {ok:o.ext,html:'<span>Outside<small>external</small></span>'},
+        {ok:!o.ext,html:'<span>Inside<small>internal</small></span>'}
+      ]
+    };
+  });
+  quiz(rounds,game1);
+}
+
+/* ---------- game 2: organ jobs ---------- */
+function game2(){
+  function jobOpt(k,ok){return {ok:ok,html:'<span>'+JOBS[k].text+'</span>'};}
+  function organOpt(k,ok){return {ok:ok,html:icon(k)+'<span>'+ORGANS[k].name+'</span>'};}
+  var three=['heart','ears','skin'];
+  var rounds=[];
+  ['heart','skin','ears'].forEach(function(k){
+    rounds.push({q:'What is the job of the '+ORGANS[k].name.toLowerCase()+'?',visual:'<div class="big">'+icon(k)+'</div>',
+      explain:ORGANS[k].fact,options:three.map(function(j){return jobOpt(j,j===k);})});
+  });
+  var asks={ears:'Which organ helps you hear?',heart:'Which organ moves blood around your body?',skin:'Which organ covers and protects your body?'};
+  ['ears','heart','skin'].forEach(function(k){
+    rounds.push({q:asks[k],explain:ORGANS[k].fact,options:three.map(function(j){return organOpt(j,j===k);})});
+  });
+  quiz(shuffle(rounds),game2);
+}
+
+/* ---------- game 3: build the body ---------- */
+function game3(){
+  homeBtn.hidden=false;
+  var SPOTS={
+    brain:{cx:150,cy:50,rx:24,ry:24,size:50},
+    lungs:{cx:150,cy:135,rx:46,ry:24,size:72},
+    heart:{cx:167,cy:183,rx:19,ry:19,size:40},
+    stomach:{cx:132,cy:225,rx:21,ry:21,size:44},
+    intestines:{cx:150,cy:268,rx:38,ry:20,size:62}
+  };
+  var order=shuffle(Object.keys(SPOTS)),idx=0,earned=0,misses=0,busy=false;
+  var svg='<svg id="body" viewBox="0 0 300 440" role="group" aria-label="Body outline">'+
+    '<g stroke="var(--bodyline)" stroke-width="5" fill="var(--body)" stroke-linejoin="round">'+
+    '<line x1="108" y1="120" x2="52" y2="222" stroke-width="34" stroke-linecap="round"/>'+
+    '<line x1="192" y1="120" x2="248" y2="222" stroke-width="34" stroke-linecap="round"/>'+
+    '<line x1="128" y1="300" x2="122" y2="408" stroke-width="40" stroke-linecap="round"/>'+
+    '<line x1="172" y1="300" x2="178" y2="408" stroke-width="40" stroke-linecap="round"/>'+
+    '<rect x="98" y="92" width="104" height="214" rx="30"/><circle cx="150" cy="50" r="40"/></g>'+
+    '<g stroke="none" fill="var(--body)"><line x1="108" y1="120" x2="52" y2="222" stroke="var(--body)" stroke-width="24" stroke-linecap="round"/>'+
+    '<line x1="192" y1="120" x2="248" y2="222" stroke="var(--body)" stroke-width="24" stroke-linecap="round"/>'+
+    '<line x1="128" y1="300" x2="122" y2="408" stroke="var(--body)" stroke-width="30" stroke-linecap="round"/>'+
+    '<line x1="172" y1="300" x2="178" y2="408" stroke="var(--body)" stroke-width="30" stroke-linecap="round"/>'+
+    '<rect x="101" y="95" width="98" height="208" rx="27"/><circle cx="150" cy="50" r="37"/></g>';
+  Object.keys(SPOTS).forEach(function(k){
+    var s=SPOTS[k];
+    svg+='<g class="spot" data-k="'+k+'" tabindex="0" role="button" aria-label="Spot for an organ"><ellipse class="hit" cx="'+s.cx+'" cy="'+s.cy+'" rx="'+(s.rx+6)+'" ry="'+(s.ry+6)+'"/></g>';
+  });
+  svg+='</svg>';
+  html('<div class="card" id="ask"></div><div class="bodywrap">'+svg+'</div><div id="fb"></div>');
+  var ask=document.getElementById('ask'),fb=document.getElementById('fb'),spots=document.querySelectorAll('.spot'),body=document.getElementById('body');
+  function prompt(){
+    var k=order[idx],o=ORGANS[k];misses=0;
+    ask.innerHTML='<div class="dots">'+order.map(function(_,d){return '<span class="'+(d<idx?'done':d===idx?'cur':'')+'"></span>';}).join('')+'</div>'+
+      '<div style="width:84px;height:84px">'+icon(k)+'</div><h2>Where do the '+(k==='brain'||k==='heart'||k==='stomach'?'':'')+o.name.toLowerCase()+' go?</h2>'+listenBtn('say');
+    if(k==='brain'||k==='heart'||k==='stomach')ask.querySelector('h2').textContent='Where does the '+o.name.toLowerCase()+' go?';
+    listen(document.getElementById('say'),ask.querySelector('h2').textContent);
+    fb.innerHTML='<p class="note">Tap the dotted spot on the body.</p>';
+    Array.prototype.forEach.call(spots,function(s){s.classList.remove('pulse','nope');});
+  }
+  function pick(g){
+    if(busy||g.classList.contains('filled'))return;
+    var k=order[idx];
+    if(g.dataset.k===k){
+      busy=true;var s=SPOTS[k];
+      g.classList.add('filled');
+      var ns='http://www.w3.org/2000/svg',n=document.createElementNS(ns,'svg');
+      n.setAttribute('viewBox','0 0 100 100');n.setAttribute('x',s.cx-s.size/2);n.setAttribute('y',s.cy-s.size/2);
+      n.setAttribute('width',s.size);n.setAttribute('height',s.size);n.setAttribute('pointer-events','none');n.innerHTML=INNER[k];
+      g.appendChild(n);good();
+      var gain=misses===0?1:0;if(gain){earned++;addStars(1);}
+      fb.innerHTML='<div class="fb ok"><p>'+(gain?'Great job! ':'You found it! ')+ORGANS[k].fact+'</p><button class="btn c-green center" id="next" type="button">'+(idx<order.length-1?'Next organ':'Finish')+'</button></div>';
+      document.getElementById('next').onclick=function(){busy=false;idx++;if(idx<order.length)prompt();else finish();};
+    }else{
+      misses++;oops();g.classList.add('nope');setTimeout(function(){g.classList.remove('nope');},400);
+      fb.innerHTML='<div class="fb bad"><p>Not there. Try again!</p></div>';
+      if(misses>=2){var right=body.querySelector('.spot[data-k="'+k+'"]');right.classList.add('pulse');fb.innerHTML='<div class="fb bad"><p>Look at the green spot!</p></div>';}
+    }
+  }
+  Array.prototype.forEach.call(spots,function(g){
+    g.addEventListener('click',function(){pick(g);});
+    g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(g);}});
+  });
+  function finish(){
+    var row='';for(var s=0;s<order.length;s++)row+=STAR_SVG.replace('FILL',s<earned?'#FFD84D':'rgba(150,160,190,.35)');
+    ask.innerHTML='<div class="big">'+icon('heart')+'</div><h2>The body is complete!</h2><div class="stars-row">'+row+'</div><p style="margin:0">You won '+earned+' of '+order.length+' stars.</p>'+
+      '<div class="row-btns"><button class="btn c-purple center" id="again" type="button">Play again</button><button class="btn c-blue center" id="home2" type="button">Home</button></div>';
+    fb.innerHTML='';
+    document.getElementById('again').onclick=game3;document.getElementById('home2').onclick=home;
+    cheer();confetti();window.scrollTo(0,0);
+  }
+  prompt();
+}
+
+/* ---------- wiring ---------- */
+homeBtn.onclick=home;
+soundBtn.onclick=function(){soundOn=!soundOn;soundBtn.textContent=soundOn?'Sound on':'Sound off';soundBtn.setAttribute('aria-pressed',soundOn?'true':'false');};
+paintStars();home();
+})();
+</script>
+
+</body></html>
